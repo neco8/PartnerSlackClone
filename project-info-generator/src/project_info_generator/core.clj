@@ -5,6 +5,7 @@
             [clojure.string :refer [ends-with? starts-with? replace-first]]
             [clojure.spec.alpha :as s]
             [clojure.spec.test.alpha :as stest]
+            [clojure.pprint :refer [pprint]]
             [rewrite-clj.zip :as z]
             [selmer.parser :as parser])
   (:import [java.nio.file Files Paths FileVisitOption FileVisitResult SimpleFileVisitor]))
@@ -205,7 +206,7 @@
     (file-updater update-json filename
                   (map (comp
                         (fn [{:keys [attr variable-name]}]
-                          (mk-update-fn attr ((keyword variable-name) data)))
+                          (mk-update-fn (keyword attr) ((keyword variable-name) data)))
                         deconstruct-update-ext)
                        update-exts))))
 
@@ -254,9 +255,7 @@
 
 
 (defn -main [& args]
-  (println :-main)
   (let [data (read-edn edn-path)
-        _ (println data)
         all-filepaths (get-all-filepaths templates-path)
         splitted-paths (map split-path all-filepaths)
 
@@ -269,7 +268,6 @@
               template-type (filename->template-type filename)
               updatee-filename (filename->updatee-filename filename)
               updatee-path (create-path root-directory-path relative-path updatee-filename)]
-          (println template-type)
           (case template-type
             ::template
             (spit updatee-path (render-template (slurp filepath) data))
@@ -279,7 +277,7 @@
               (if updatee-path
                 (update-package-json data update-exts updatee-path)
                 (println (keyword "更新対象のファイルが存在しません" updatee-path))))
-            
+
             ::project-clj
             (let [update-exts (valid-project-clj? filename)]
               (if updatee-path

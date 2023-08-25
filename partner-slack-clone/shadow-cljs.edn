@@ -2,7 +2,7 @@
 
  
 
- :source-paths ["src" "test"]
+ :source-paths ["src/cljs" "src/common" "test"]
 
  :dependencies
  [[reagent "1.1.1"]
@@ -21,7 +21,7 @@
    :output-dir "resources/public/js/compiled"
    :asset-path "/js/compiled"
    :modules
-   {:app {:init-fn partner-slack-clone.core/init}}
+   {:app {:init-fn cljs.partner-slack-clone.core/init}}
    :devtools
    {:preloads [
                re-frisk.preload]}
